@@ -148,7 +148,7 @@
   (concat "^[ \t]*\\(" (replace-regexp-in-string "|" "\\\\|" keyword) "\\):?"))
 
 (defvar feature-default-language "en")
-(defvar feature-default-i18n-file "~/.emacs.d/elisp/feature-mode/i18n.yml")
+(defvar feature-default-i18n-file (locate-library "gherkin-i18n.yml" t))
 
 (defconst feature-keywords-per-language
   (if (file-readable-p feature-default-i18n-file)
