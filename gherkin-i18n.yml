@@ -144,6 +144,19 @@
   then: "*|DEN"
   and: "*|AN"
   but: "*|BUT"
+"en-pirate":
+  name: Pirate
+  native: Pirate
+  feature: Ahoy matey!
+  background: Yo-ho-ho
+  scenario: Heave to
+  scenario_outline: Shiver me timbers
+  examples: Dead men tell no tales
+  given: "*|Gangway!"
+  when: "*|Blimey!"
+  then: "*|Let go and haul"
+  and: "*|Aye"
+  but: "*|Avast!"
 "en-Scouse":
   name: Scouse
   native: Scouse
@@ -269,8 +282,8 @@
   scenario: Forgatókönyv
   scenario_outline: Forgatókönyv vázlat
   examples: Példák
-  given: "*|Ha"
-  when: "*|Majd"
+  given: "*|Amennyiben|Adott"
+  when: "*|Majd|Ha|Amikor"
   then: "*|Akkor"
   and: "*|És"
   but: "*|De"
@@ -339,6 +352,19 @@
   then: "*|Tada"
   and: "*|Ir"
   but: "*|Bet"
+"lu":
+  name: Luxemburgish
+  native: Lëtzebuergesch
+  feature: Funktionalitéit
+  background: Hannergrond
+  scenario: Szenario
+  scenario_outline: Plang vum Szenario
+  examples: Beispiller
+  given: "*|ugeholl"
+  when: "*|wann"
+  then: "*|dann"
+  and: "*|an|a"
+  but: "*|awer|mä"
 "lv":
   name: Latvian
   native: latviešu
@@ -438,9 +464,9 @@
   scenario: Сценарий
   scenario_outline: Структура сценария
   examples: Значения
-  given: "*|Допустим"
-  when: "*|Если"
-  then: "*|То"
+  given: "*|Допустим|Дано|Пусть"
+  when: "*|Если|Когда"
+  then: "*|То|Тогда"
   and: "*|И|К тому же"
   but: "*|Но|А"
 "sv":
@@ -516,10 +542,10 @@
   scenario: Сценарій
   scenario_outline: Структура сценарію
   examples: Приклади
-  given: "*|Припустимо|Припустимо, що|Нехай"
-  when: "*|Якщо"
-  then: "*|То"
-  and: "*|І"
+  given: "*|Припустимо|Припустимо, що|Нехай|Дано"
+  when: "*|Якщо|Коли"
+  then: "*|То|Тоді"
+  and: "*|І|А також|Та"
   but: "*|Але"
 "uz":
   name: Uzbek
