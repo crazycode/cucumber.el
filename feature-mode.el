@@ -1,6 +1,10 @@
-;; cucumber.el -- Emacs mode for editing plain text user stories
-;;
-;; Copyright (C) 2008 — 2011 Michael Klishin and other contributors
+;;; feature-mode.el --- Major mode for editing Gherkin (i.e. Cucumber) user stories
+;;; Version: 0.4
+;;; Author: Michael Klishin
+;;; URL: https://github.com/michaelklishin/cucumber.el
+;;; Uploader: Kao Félix
+
+;; Copyright (C) 2008 — 2012 Michael Klishin and other contributors
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -28,6 +32,9 @@
 ;; ;; and load it
 ;; (require 'feature-mode)
 ;; (add-to-list 'auto-mode-alist '("\.feature$" . feature-mode))
+;;
+;; If using RVM, set `feature-use-rvm' to `t' to enable RVM
+;; support. This requires `rvm.el'.
 ;;
 ;; Language used in feature file is automatically detected from
 ;; "language: [2-letter ISO-code]" tag in feature file.  You can
@@ -80,6 +87,11 @@
   "set this variable to the command, which should be used to execute cucumber scenarios."
   :group 'feature-mode
   :type 'string)
+
+(defcustom feature-use-rvm nil
+  "t when RVM is in use. (Requires rvm.el)"
+  :type 'boolean
+  :group 'feature-mode)
 
 ;;
 ;; Keywords and font locking
@@ -248,11 +260,11 @@
 
 (defcustom feature-indent-level 2
   "Indentation of feature statements"
-  :type 'integer :group 'feature)
+  :type 'integer :group 'feature-mode)
 
 (defcustom feature-indent-offset 2
   "*Amount of offset per level of indentation."
-  :type 'integer :group 'feature)
+  :type 'integer :group 'feature-mode)
 
 (defun feature-compute-indentation ()
   "Calculate the maximum sensible indentation for the current line."
@@ -322,7 +334,10 @@ back-dent the line by `feature-indent-offset' spaces.  On reaching column
   (set (make-local-variable 'font-lock-defaults)
        (list (feature-font-lock-keywords-for (feature-detect-language)) nil nil))
   (set (make-local-variable 'font-lock-keywords)
-       (feature-font-lock-keywords-for (feature-detect-language))))
+       (feature-font-lock-keywords-for (feature-detect-language)))
+  (set (make-local-variable 'imenu-generic-expression)
+        `(("Scenario:" ,(feature-scenario-name-re (feature-detect-language)) 2)
+          ("Background:" ,(feature-background-re (feature-detect-language)) 1))))
 
 (defun feature-minor-modes ()
   "Enable all minor modes for feature mode."
@@ -344,6 +359,7 @@ back-dent the line by `feature-indent-offset' spaces.  On reaching column
   (feature-minor-modes)
   (run-mode-hooks 'feature-mode-hook))
 
+;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.feature\\'" . feature-mode))
 
 ;;
@@ -429,7 +445,7 @@ are loaded on startup.  If nil, don't load snippets.")
                          (recenter '(t))))
                    (select-window cur-window))))))))
 
-(defun feature-run-cucumber (cuke-opts &optional &key feature-file)
+(defun* feature-run-cucumber (cuke-opts &key feature-file)
   "Runs cucumber with the specified options"
   (feature-register-verify-redo (list 'feature-run-cucumber
                                       (list 'quote cuke-opts)
@@ -442,6 +458,8 @@ are loaded on startup.  If nil, don't load snippets.")
                        feature-default-directory)))
     (ansi-color-for-comint-mode-on)
     (let ((default-directory (feature-project-root)))
+      (if feature-use-rvm
+          (rvm-activate-corresponding-ruby))
       (compile (concat (replace-regexp-in-string "\{options\}" opts-str
                         (replace-regexp-in-string "\{feature\}" feature-arg feature-cucumber-command))) t)))
   (cucumber-end-of-buffer-target-window cucumber-compilation-buffer-name))
@@ -476,7 +494,7 @@ are loaded on startup.  If nil, don't load snippets.")
          (matched? (string-match "^\\(.+\\):\\([0-9]+\\)$" file-and-line)))
     (if matched?
         (let ((file    (format "%s/%s" root (match-string 1 file-and-line)))
-              (line-no (string-to-int (match-string 2 file-and-line))))
+              (line-no (string-to-number (match-string 2 file-and-line))))
           (find-file file)
           (goto-char (point-min))
           (forward-line (1- line-no)))
@@ -486,3 +504,4 @@ are loaded on startup.  If nil, don't load snippets.")
 
 (provide 'cucumber-mode)
 (provide 'feature-mode)
+;;; feature-mode.el ends here
